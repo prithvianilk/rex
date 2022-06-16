@@ -41,6 +41,27 @@ func TestSingleCharacterPatternInLongTextInvalid(t *testing.T) {
 	}
 }
 
+func TestDotPatternValid(t *testing.T) {
+	err := handleTest(".", "a", true)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestDotPatternInLongTextValid(t *testing.T) {
+	err := handleTest(".", "aa", true)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestDotPatternInNoText(t *testing.T) {
+	err := handleTest(".", "", false)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
 func handleTest(pattern, text string, exists bool) error {
 	regex := CreateRegex(pattern, text)
 	if regex.Match() != exists {
