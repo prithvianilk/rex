@@ -1,35 +1,51 @@
 package main
 
-func Match(pattern, text string) bool {
-	if matchFromStart(pattern, text) {
-		return true
+import "errors"
+
+func invalidError() (string, error) {
+	return "", errors.New("no match found for given pattern")
+}
+
+func Match(pattern, text string) (string, error) {
+	match, err := matchFromStart(pattern, text)
+	if err == nil {
+		return match, nil
 	} else if len(text) > 0 {
 		return Match(pattern, text[1:])
 	}
-	return false
+	return invalidError()
 }
 
-func matchFromStart(pattern, text string) bool {
+func matchFromStart(pattern, text string) (string, error) {
 	if len(pattern) == 0 {
-		return true
+		return "", nil
 	} else if len(pattern) > 1 && pattern[1] == '*' {
 		return matchStar(pattern[0], pattern[2:], text)
 	} else if len(text) == 0 {
-		return false
+		return invalidError()
 	} else if pattern[0] == text[0] || pattern[0] == '.' {
-		return matchFromStart(pattern[1:], text[1:])
+		match, err := matchFromStart(pattern[1:], text[1:])
+		if err != nil {
+			return invalidError()
+		}
+		return string(text[0]) + match, nil
 	}
-	return false
+	return invalidError()
 }
 
-func matchStar(char byte, patten, text string) bool {
+func matchStar(char byte, patten, text string) (string, error) {
 	acceptsAny := char == '.'
-	for !matchFromStart(patten, text) {
-		if len(text) > 0 && (acceptsAny || char == text[0]) {
-			text = text[1:]
-		} else {
-			return false
+	prefix := ""
+	for {
+		matching, err := matchFromStart(patten, text)
+		if err == nil {
+			return prefix + matching, nil
 		}
+		if len(text) > 0 && (acceptsAny || char == text[0]) {
+			prefix += string(text[0])
+			text = text[1:]
+			continue
+		}
+		return invalidError()
 	}
-	return true
 }
