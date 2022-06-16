@@ -21,14 +21,11 @@ func matchFromStart(pattern, text string) (string, error) {
 		return "", nil
 	} else if len(pattern) > 1 && pattern[1] == '*' {
 		return matchStar(pattern[0], pattern[2:], text)
-	} else if len(text) == 0 {
-		return invalidError()
-	} else if pattern[0] == text[0] || pattern[0] == '.' {
+	} else if len(text) > 0 && (pattern[0] == text[0] || pattern[0] == '.') {
 		match, err := matchFromStart(pattern[1:], text[1:])
-		if err != nil {
-			return invalidError()
+		if err == nil {
+			return string(text[0]) + match, nil
 		}
-		return string(text[0]) + match, nil
 	}
 	return invalidError()
 }
@@ -37,9 +34,9 @@ func matchStar(char byte, patten, text string) (string, error) {
 	acceptsAny := char == '.'
 	prefix := ""
 	for {
-		matching, err := matchFromStart(patten, text)
+		match, err := matchFromStart(patten, text)
 		if err == nil {
-			return prefix + matching, nil
+			return prefix + match, nil
 		}
 		if len(text) > 0 && (acceptsAny || char == text[0]) {
 			prefix += string(text[0])
