@@ -63,8 +63,7 @@ func TestDotPatternInNoText(t *testing.T) {
 }
 
 func handleTest(pattern, text string, exists bool) error {
-	regex := CreateRegex(pattern, text)
-	if regex.Match() != exists {
+	if Match(pattern, text) != exists {
 		var errorMessage string
 		if !exists {
 			errorMessage = fmt.Sprintf("Pattern %s does not exist in %s", pattern, text)

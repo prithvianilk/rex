@@ -1,23 +1,12 @@
 package main
 
-type Regex struct {
-	pattern string
-	text    string
-}
-
-func CreateRegex(pattern, text string) *Regex {
-	return &Regex{pattern: pattern, text: text}
-}
-
-func (r *Regex) Match() bool {
-	if len(r.pattern) == 0 {
+func Match(pattern, text string) bool {
+	if len(pattern) == 0 {
 		return true
-	} else if len(r.text) == 0 {
+	} else if len(text) == 0 {
 		return false
-	} else if r.pattern[0] == r.text[0] || r.pattern[0] == '.' {
-		r.pattern, r.text = r.pattern[1:], r.text[1:]
-		return r.Match()
+	} else if pattern[0] == text[0] || pattern[0] == '.' {
+		return Match(pattern[1:], text[1:])
 	}
-	r.text = r.text[1:]
-	return r.Match()
+	return Match(pattern, text[1:])
 }
