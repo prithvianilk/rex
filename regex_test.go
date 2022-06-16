@@ -34,6 +34,20 @@ func TestSingleCharacterPatternInLongTextAtEndValid(t *testing.T) {
 	}
 }
 
+func TestLongPatternInLongTextInMiddleValid(t *testing.T) {
+	err := handleTest("12", "333321233", true)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestLongPatternInLongTextInvalid(t *testing.T) {
+	err := handleTest("12", "21321", false)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
 func TestSingleCharacterPatternInLongTextInvalid(t *testing.T) {
 	err := handleTest("a", "bb", false)
 	if err != nil {
